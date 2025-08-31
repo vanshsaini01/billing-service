@@ -1,7 +1,7 @@
 package com.shirtms.billing.entity;
 
 import jakarta.persistence.*;
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 @Entity
 @Table(name = "bills")
@@ -12,23 +12,30 @@ public class Bill {
     private Long id;
 
     private String customerName;
-    private String orderId;
-    private double amount;
-    private LocalDateTime billingDate;
 
-    // Constructors
-    public Bill() {}
+    private Double amount;
 
-    public Bill(Long id, String customerName, String orderId, double amount, LocalDateTime billingDate) {
-        this.id = id;
-        this.customerName = customerName;
-        this.orderId = orderId;
-        this.amount = amount;
-        this.billingDate = billingDate;
+    private LocalDate date;
+
+    // --- Constructors ---
+    public Bill() {
     }
 
-    // Getters & Setters
+    public Bill(String customerName, Double amount, LocalDate date) {
+        this.customerName = customerName;
+        this.amount = amount;
+        this.date = date;
+    }
 
+    // --- Lifecycle Hook to auto-set date before persisting ---
+    @PrePersist
+    protected void onCreate() {
+        if (this.date == null) {
+            this.date = LocalDate.now();  // Automatically set today's date
+        }
+    }
+
+    // --- Getters & Setters ---
     public Long getId() {
         return id;
     }
@@ -45,27 +52,19 @@ public class Bill {
         this.customerName = customerName;
     }
 
-    public String getOrderId() {
-        return orderId;
-    }
-
-    public void setOrderId(String orderId) {
-        this.orderId = orderId;
-    }
-
-    public double getAmount() {
+    public Double getAmount() {
         return amount;
     }
 
-    public void setAmount(double amount) {
+    public void setAmount(Double amount) {
         this.amount = amount;
     }
 
-    public LocalDateTime getBillingDate() {
-        return billingDate;
+    public LocalDate getDate() {
+        return date;
     }
 
-    public void setBillingDate(LocalDateTime billingDate) {
-        this.billingDate = billingDate;
+    public void setDate(LocalDate date) {
+        this.date = date;
     }
 }
